@@ -12,6 +12,11 @@ brownie networks add development mainnet-fork cmd=ganache-cli host=http://127.0.
 brownie console --network mainnet-fork
 brownie test --network mainnet-fork
 brownie compile
+brownie accounts list
+brownie accounts new freecodecamp-account
+brownie accounts delete freecodecamp-account
+brownie networks delete mainnet-fork
+brownie run .\scripts\deploy_lottery.py
 ```
 
 ## Prettier Solidity
