@@ -21,7 +21,7 @@ brownie run .\scripts\deploy_lottery.py
 
 ## Prettier Solidity
 
-https://github.com/prettier-solidity/prettier-plugin-solidity
+https://github.com/prettier-solidity/prettier-plugin-solidity#readme
 
 ### VSCode
 
