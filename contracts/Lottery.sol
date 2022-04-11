@@ -4,54 +4,73 @@ import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Lottery is Ownable {
+    address payable[] public players;
+    uint256 public usdEntryFee;
+    AggregatorV3Interface internal ethUsdPriceFeed;
+    enum LOTTERY_STATE {
+        OPEN,
+        CLOSED,
+        CALCULATING_WINNER
+    }
+    LOTTERY_STATE public lottery_state;
 
- address payable[] public players;
- uint256 public usdEntryFee;
- AggregatorV3Interface internal ethUsdPriceFeed;
- enum LOTTERY_STATE {
-  OPEN, 
-  CLOSED,
-  CALCULATING_WINNER
- }
- LOTTERY_STATE public lottery_state;
+    constructor(address _priceFeedAddress) public {
+        usdEntryFee = 50;
+        ethUsdPriceFeed = AggregatorV3Interface(_priceFeedAddress);
+        lottery_state = LOTTERY_STATE.CLOSED;
+    }
 
+    function enter() public payable {
+        // $50 minimum
+        require(lottery_state == LOTTERY_STATE.OPEN);
+        require(msg.value >= getEntranceFee(), "Not enough ETH!");
+        players.push(msg.sender);
+    }
 
- constructor(address _priceFeedAddress) public {
-  usdEntryFee = 50;
-  ethUsdPriceFeed = AggregatorV3Interface(_priceFeedAddress);
-  lottery_state = LOTTERY_STATE.CLOSED;
- }
+    function getEthPriceInDollars() public view returns (uint256) {
+        (, int256 price, , , ) = ethUsdPriceFeed.latestRoundData();
 
- function enter() public payable { // $50 minimum
-  require(lottery_state == LOTTERY_STATE.OPEN);
-  require(msg.value >= getEntranceFee(), "Not enough ETH!");
-  players.push(msg.sender);
+        uint256 adjustedPrice = uint256(price) / (10**8); // 18 decimals, conver to wei
 
- }
+        return adjustedPrice;
+    }
 
- function getEthPriceInDollars() public view returns (uint256){
-  (,int price,,,) = ethUsdPriceFeed.latestRoundData();
+    function getEntranceFee() public view returns (uint256) {
+        // in wei
+        uint256 costToEnter = getWeiPriceFromDollar(usdEntryFee);
+        return costToEnter;
+    }
 
-  uint256 adjustedPrice = uint256(price) / ( 10 ** 8 ); // 18 decimals, conver to wei
+    function getWeiPriceFromDollar(uint256 dollarAmount)
+        public
+        view
+        returns (uint256)
+    {
+        uint256 ethPriceInDollars = getEthPriceInDollars();
 
-  return adjustedPrice;
- }
+        uint256 dollarAmountInWei = ((dollarAmount * 10**18) /
+            ethPriceInDollars); //
+        return dollarAmountInWei;
+    }
 
- function getEntranceFee() public view returns (uint256){ // in wei
-  uint costToEnter = getWeiPriceFromDollar(usdEntryFee);
-  return costToEnter;
- }
+    function startLottery() public onlyOwner {
+        require(
+            lottery_state == LOTTERY_STATE.CLOSED,
+            "Can't start a new lottery yet!"
+        );
+        lottery_state = LOTTERY_STATE.OPEN;
+    }
 
- function getWeiPriceFromDollar(uint256 dollarAmount) public view returns (uint256){
-  uint256 ethPriceInDollars = getEthPriceInDollars();
-
-  uint256 dollarAmountInWei = ((dollarAmount * 10**18) / ethPriceInDollars) ; // 
-  return dollarAmountInWei;
- }
-
- function startLottery() public onlyOwner {
-  require(lottery_state == LOTTERY_STATE.CLOSED, "Can't start a new lottery yet!");
-  lottery_state = LOTTERY_STATE.OPEN;
- }
- function endLottery() public {}
+    function endLottery() public onlyOwner {
+        uint256(
+            keccack256(
+                abi.encodePacked(
+                    nonce,
+                    msg.sender,
+                    block.difficulty,
+                    block.timestamp
+                )
+            )
+        ) % players.length;
+    }
 }

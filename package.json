@@ -22,6 +22,8 @@
   "homepage": "https://github.com/saitamasan0220/brownie-smart-lottery#readme",
   "devDependencies": {
     "@nomiclabs/buidler": "^1.4.8",
-    "hardhat": "^2.9.3"
+    "hardhat": "^2.9.3",
+    "prettier": "^2.6.2",
+    "prettier-plugin-solidity": "^1.0.0-beta.19"
   }
 }
