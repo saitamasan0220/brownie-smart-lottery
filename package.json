@@ -1,0 +1,27 @@
+{
+  "name": "brownie-smart-lottery",
+  "version": "1.0.0",
+  "description": "```\r npm install -g ganache-cli",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saitamasan0220/brownie-smart-lottery.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/saitamasan0220/brownie-smart-lottery/issues"
+  },
+  "homepage": "https://github.com/saitamasan0220/brownie-smart-lottery#readme",
+  "devDependencies": {
+    "@nomiclabs/buidler": "^1.4.8",
+    "hardhat": "^2.9.3"
+  }
+}
