@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.6.6;
-
 import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 
 contract Lottery {
@@ -19,7 +19,13 @@ contract Lottery {
  }
 
  function getEntraceFee() public view returns (uint256){
+  (,int price,,,,) = ethUsdPriceFeed.latestRoundData;
 
+  uint256 adjustedPrice = uint256(price) * 10 ** 10; // 18 decimals
+
+  // $50, $2000 / ETH
+  uint256 costToEnter = (usdEntryFee * 10 ** 18) / price;
+  return costToEnter;
  }
  function startLottery() public{}
  function endLottery() public {}
