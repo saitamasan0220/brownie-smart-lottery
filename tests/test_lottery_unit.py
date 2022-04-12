@@ -1,3 +1,4 @@
+import time
 from scripts.helpful_scripts import (
     LOCAL_BLOCKCHAIN_ENVIRONMENTS,
     get_account,
@@ -9,9 +10,9 @@ from scripts.deploy_lottery import deploy_lottery
 from web3 import Web3
 import pytest
 
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 
 def test_get_entrance_fee():
@@ -107,3 +108,20 @@ def test_can_pick_winner_correctly():
     assert lottery.recentWinner() == account
     assert lottery.balance() == 0
     assert account.balance() == starting_balance_of_account + balance_of_lottery
+
+# def test_can_pick_winner():
+#     if network.show_active() in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+#         pytest.skip()
+#     lottery = deploy_lottery()
+#     account = get_account()
+#     starting_tx = lottery.startLottery({"from": account})
+
+#     # Act
+#     # enter lottery with multiple accounts
+#     tx = lottery.enter({"from": account, "value": lottery.getEntranceFee()})
+#     tx = lottery.enter({"from": account, "value": lottery.getEntranceFee()})
+#     fund_with_link(lottery)
+#     end_tx = lottery.endLottery({"from": account})
+#     time.sleep(60)
+#     assert lottery.recentWinner() == account
+#     assert lottery.balance() == 0
