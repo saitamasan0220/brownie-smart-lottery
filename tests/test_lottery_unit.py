@@ -1,8 +1,9 @@
-from brownie import Lottery, accounts, config, network
-from web3 import Web3
+from scripts.helpful_scripts import LOCAL_BLOCKCHAIN_ENVIRONMENTS, get_account
+from brownie import Lottery, accounts, config, network, exceptions
 from scripts.deploy_lottery import deploy_lottery
+from web3 import Web3
 import pytest
-from scripts.helpful_scripts import LOCAL_BLOCKCHAIN_ENVIRONMENTS
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -19,3 +20,13 @@ def test_get_entrance_fee():
     expected_entrance_fee = lottery.getWeiPriceFromDollar(50)
     entrance_fee = lottery.getEntranceFee()
     assert expected_entrance_fee == entrance_fee
+
+def test_cant_enter_unless_started():
+    # Arrange
+    if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
+        pytest.skip()
+    lottery = deploy_lottery()
+    # Act/Assert
+    with pytest.raises(exceptions.VirtualMachineError):
+        lottery.enter({"from": get_account(), "value": lottery.getEntranceFee()})
+
