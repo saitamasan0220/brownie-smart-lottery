@@ -17,6 +17,8 @@ brownie accounts new freecodecamp-account
 brownie accounts delete freecodecamp-account
 brownie networks delete mainnet-fork
 brownie run .\scripts\deploy_lottery.py
+brownie test -k test_get_entrance_fee
+brownie test -k test_get_entrance_fee --network rinkeby
 ```
 
 ## Prettier Solidity
