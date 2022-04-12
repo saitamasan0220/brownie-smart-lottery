@@ -18,6 +18,7 @@ contract Lottery is VRFConsumerBase, Ownable {
     LOTTERY_STATE public lottery_state;
     uint256 public fee;
     bytes32 public keyhash; // uniquely identifies chainlink node
+    event RequestedRandomness(bytes32 requestId);
 
     constructor(
         address _priceFeedAddress,
@@ -75,19 +76,10 @@ contract Lottery is VRFConsumerBase, Ownable {
     }
 
     function endLottery() public onlyOwner {
-        // uint256(
-        //     keccack256(
-        //         abi.encodePacked(
-        //             nonce,
-        //             msg.sender,
-        //             block.difficulty,
-        //             block.timestamp
-        //         )
-        //     )
-        // ) % players.length;
         lottery_state = LOTTERY_STATE.CALCULATING_WINNER;
-        bytes32 requestId = requestRandomness(keyhash, fee); // will return a bytes32 (the request id)
-        // follows the request and receive architecture
+        // requestRandomness will return a bytes32 (the request id)
+        bytes32 requestId = requestRandomness(keyhash, fee);
+        emit RequestedRandomness(requestId);
     }
 
     // override = overrides original declaration of the function
