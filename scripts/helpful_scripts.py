@@ -1,4 +1,11 @@
-from brownie import accounts, network, config, MockV3Aggregator, Contract, VRFCoordinatorMock
+from brownie import (
+	accounts,
+	network,
+	config,
+	MockV3Aggregator,
+	Contract,
+	VRFCoordinatorMock, LinkToken
+)
 
 FORKED_LOCAL_ENVIRONMENTS = ["mainnet-fork", "mainnet-fork-dev"]
 LOCAL_BLOCKCHAIN_ENVIRONMENTS = ["development", "ganache-local"]
@@ -20,8 +27,11 @@ def get_account(index=None, id=None):
 	return accounts.add(config["wallet"]["from_key"])
 
 
-contract_to_mock = {"eth_usd_price_feed": MockV3Aggregator,
-"vrf_coordinator": VRFCoordinatorMock, }
+contract_to_mock = {
+	"eth_usd_price_feed": MockV3Aggregator,
+	"vrf_coordinator": VRFCoordinatorMock,
+	"link_token": LinkToken,
+}
 
 
 """
@@ -36,8 +46,9 @@ Returns:
 	brownie.network.contract.ProjectControct: 
 		the most recently deployed version of this contract.
 """
+
+
 def get_contract(contract_name):
-	
 	contract_type = contract_to_mock[contract_name]
 	if network.show_active() in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
 		if len(contract_type) <= 0:
@@ -60,4 +71,6 @@ INITIAL_VALUE = 200000000000
 def deploy_mocks(decimals=DECIMALS, initial_value=INITIAL_VALUE):
 	account = get_account()
 	MockV3Aggregator.deploy(decimals, initial_value, {"from": account})
+	link_token = LinkToken.deploy({"from": account})
+	VRFCoordinatorMock.deploy(link_token.address, {"from": account})
 	print("Deployed!")
