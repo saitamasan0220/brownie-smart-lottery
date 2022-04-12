@@ -15,17 +15,17 @@ def test_can_pick_winner():
     lottery = deploy_lottery()
     account = get_account()
     starting_tx = lottery.startLottery({"from": account})
-    starting_tx.wait(1)
+    # starting_tx.wait(1)
 
     # Act
     # enter lottery with multiple accounts
     tx = lottery.enter({"from": account, "value": lottery.getEntranceFee()})
-    tx.wait(1)
+    # tx.wait(1)
     tx = lottery.enter({"from": account, "value": lottery.getEntranceFee()})
-    tx.wait(1)
+    # tx.wait(1)
     fund_with_link(lottery)
     end_tx = lottery.endLottery({"from": account})
-    end_tx.wait(1)
+    # end_tx.wait(1)
     time.sleep(60)
     assert lottery.recentWinner() == account
     assert lottery.balance() == 0

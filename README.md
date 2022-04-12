@@ -23,6 +23,7 @@ brownie test -k test_get_entrance_fee
 brownie test -k test_get_entrance_fee --network rinkeby
 
 brownie test -k test_can_pick_winner --network rinkeby -s
+brownie run .\scripts\deploy_lottery.py --network rinkeby
 ```
 
 ## Faucets
